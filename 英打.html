@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英打冒險王｜打字遊戲</title>
+<style>
+:root{--blue:#3478bd;--blue2:#2f70b7;--sky:#b6edf7;--mint:#20b58d;--green:#087e5a;--orange:#d66f38;--ink:#092a3a;--cream:#fffdf5;--pink:#ffe2ec}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Trebuchet MS","Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--blue);color:var(--ink);min-height:100vh}
+body:before,body:after{content:"";position:fixed;background:#fff;z-index:-1;width:38vw;height:100px;border-radius:0 0 55% 45%;top:-48px;right:-5vw;transform:rotate(-4deg)}
+body:after{top:auto;right:auto;bottom:-55px;left:-4vw;transform:rotate(5deg);border-radius:55% 45% 0 0}
+header{max-width:1160px;margin:auto;padding:22px 24px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{margin:0;color:#b7eff8;font-size:clamp(2.1rem,6vw,4rem);letter-spacing:2px;-webkit-text-stroke:1.5px #071b28;text-shadow:3px 4px 0 #071b28}
+header p{margin:0;color:white;font-weight:700}
+main{max-width:1160px;margin:0 auto;padding:10px 24px 35px}
+.panel{background:var(--sky);border-radius:30px;padding:clamp(18px,3vw,32px);box-shadow:0 8px 0 rgba(7,45,76,.15)}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h2{margin:0 0 12px;font-size:clamp(1.45rem,3vw,2.2rem)}
+.sub{margin:6px 0 18px;line-height:1.7}
+.pill{display:inline-block;background:#fff;border:2px solid #102e40;border-radius:999px;padding:8px 15px;font-weight:800}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0 22px}
+.step{border:3px solid transparent;background:#d5f6fa;border-radius:18px;padding:14px 10px;text-align:center;font-weight:800;cursor:pointer;transition:.2s}
+.step .num{display:inline-grid;place-items:center;background:var(--mint);color:white;border-radius:50%;width:38px;height:38px;margin-bottom:6px;font-size:1.2rem}
+.step.active{border-color:#0b5e8c;background:#fff}
+.step.done{background:#d4ffe9}
+button{border:0;border-radius:14px;padding:12px 18px;font-size:1rem;font-weight:800;cursor:pointer;transition:transform .12s,filter .12s}
+button:hover{filter:brightness(1.04);transform:translateY(-2px)}
+.primary{background:var(--blue);color:#fff;box-shadow:0 4px 0 #20558a}
+.secondary{background:#fff;color:var(--ink);border:2px solid #2d6a93}
+.orange{background:var(--orange);color:#fff}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+kbd{background:#fff;border:2px solid #779aa7;border-bottom-width:4px;border-radius:7px;padding:2px 7px;font-weight:900}
+.keyboard-wrap{overflow-x:auto;margin:20px 0;padding:4px 2px 12px}
+.keyboard-note{font-size:.9rem;font-weight:800;margin-bottom:10px;color:#25566a}
+.letter-board{display:flex;flex-direction:column;gap:6px;min-width:620px;align-items:flex-start}
+.key-row{display:flex;gap:5px;justify-content:flex-start;width:max-content}
+.keycap{display:grid;place-items:center;background:#fff;border:2px solid #4b9db5;border-bottom:5px solid #4b9db5;border-radius:7px;width:42px;height:43px;padding:3px;text-align:center;font-weight:900;font-size:1rem;flex-shrink:0}
+.keycap.home{background:#ffe2a8;border-color:#d99039;border-bottom-color:#d99039}
+.keycap.hit{background:#c6ffe6;transform:translateY(2px);border-bottom-width:3px}
+.keycap.wide{width:64px}.keycap.space{width:245px}
+@media(max-width:760px){.letter-board{min-width:590px}.keycap{width:39px;height:40px}.keycap.space{width:220px}}
+.collection{background:#e0f8fc;border:2px solid #75cbdc;border-radius:22px;padding:16px 18px;margin:18px 0}
+.collection-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.collection-head h2{margin:0;font-size:1.35rem}
+.collection-head p{margin:5px 0 0}
+.sticker-shelf{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:14px}
+.sticker-card{background:#fff;border:2px dashed #b2dbe4;border-radius:15px;text-align:center;padding:12px 6px;min-height:118px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.sticker-card .sticker-icon{font-size:2.2rem;filter:grayscale(1);opacity:.35}
+.sticker-card.earned{border:2px solid #e0b83c;background:#fff8d9;box-shadow:0 3px 0 #e8d17c}
+.sticker-card.earned .sticker-icon{filter:none;opacity:1}
+.sticker-card strong{font-size:.9rem;line-height:1.35}
+.sticker-card small{font-size:.75rem;color:#53727e}
+@media(max-width:760px){.sticker-shelf{grid-template-columns:repeat(2,minmax(0,1fr))}.collection{padding:14px}}
+.practice-card{background:#fff;border-radius:20px;padding:20px;margin-top:14px}
+.target{font-size:clamp(2rem,6vw,4rem);font-weight:900;letter-spacing:4px;color:#1765a2;text-align:center;min-height:70px;overflow-wrap:anywhere}
+.game-layout{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:18px}
+.gamefield{height:360px;position:relative;overflow:hidden;border:3px solid #66b9cc;border-radius:20px;background:linear-gradient(#e9fcff,#c6f4fa);isolation:isolate}
+.gamefield:after{content:"";position:absolute;bottom:0;left:0;right:0;height:12px;background:#71d4ac}
+.falling{position:absolute;top:0;left:20%;background:#fff;border:3px solid #2b84b5;border-radius:15px;padding:8px 13px;font-size:1.2rem;font-weight:900;box-shadow:0 4px 0 #9bcbd7;white-space:nowrap;z-index:2}
+.falling.word{font-size:1rem}
+.sidebox{background:#fff;border-radius:18px;padding:16px}
+.stat{display:flex;justify-content:space-between;border-bottom:1px dashed #bdd4dc;padding:10px 0;font-weight:800}
+.stat strong{font-size:1.2rem;color:#146a9f}
+.type-row{display:flex;gap:8px;margin-top:12px}
+.type-row input{width:100%;min-width:0;border:3px solid #6aaebd;border-radius:12px;padding:13px;font-size:1.15rem;font-weight:700;outline:none}
+.type-row input:focus{border-color:#276db0}
+.feedback{font-weight:800;min-height:27px;margin-top:8px}
+.badge-pop{display:flex;align-items:center;gap:16px;background:#fff7ce;border:3px dashed #dfac32;border-radius:22px;padding:16px;margin:16px 0}
+.sticker{font-size:3.5rem;flex-shrink:0;filter:drop-shadow(2px 3px 0 #e2b44b)}
+.badge-pop h3{margin:0 0 4px}
+.badge-pop p{margin:0;line-height:1.5}
+.hidden{display:none!important}
+.result{background:#fff;border-radius:20px;padding:22px;text-align:center;margin-top:18px}
+.result .big{font-size:2.7rem}
+.note{font-size:.93rem;line-height:1.65;color:#254c5d}
+footer{text-align:center;color:#e9f9ff;padding:0 16px 24px;font-size:.9rem}
+@media(max-width:760px){.steps{grid-template-columns:repeat(2,1fr)}.game-layout{grid-template-columns:1fr}.gamefield{height:330px}.letter-board{min-width:590px}header{padding-top:25px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>英打冒險王</h1>
+  <p>⌨️ 打字練習 × 掉落挑戰 × 貼紙收藏</p>
+</header>
+<main>
+<section class="panel">
+  <div class="toprow"><h2 id="pageTitle">準備好開始英打冒險了嗎？</h2><span class="pill" id="modePill">學習地圖</span></div>
+  <p class="sub" id="intro">依照順序完成四個關卡：先熟悉鍵盤字母，再挑戰單字。練習後進行限時測驗，把掉落的字母或單字打出來就能消除！</p>
+  <div class="steps" id="steps">
+    <div class="step active" data-stage="0"><div class="num">1</div><div>字母練習</div><small>慢速</small></div>
+    <div class="step" data-stage="1"><div class="num">2</div><div>字母練習</div><small>快速</small></div>
+    <div class="step" data-stage="2"><div class="num">3</div><div>單字練習</div><small>慢速</small></div>
+    <div class="step" data-stage="3"><div class="num">4</div><div>單字練習</div><small>快速</small></div>
+  </div>
+  <section class="collection" aria-labelledby="collectionTitle">
+    <div class="collection-head">
+      <div><h2 id="collectionTitle">🌟 好棒棒區</h2><p class="note">每拿到一張貼紙，就會收進你的專屬收藏！</p></div>
+      <span class="pill" id="stickerCount">已收集 0 / 5</span>
+    </div>
+    <div class="sticker-shelf" id="stickerShelf"></div>
+  </section>
+  <div id="lesson">
+    <h2 id="lessonTitle">第一關｜認識字母位置</h2>
+    <p id="lessonText" class="sub">先看看鍵盤排列，跟著提示練習字母。黃色按鍵是基準列，打字時可以先把手指放在 A、S、D、F 與 J、K、L、; 附近。</p>
+    <div class="keyboard-wrap">
+      <div class="keyboard-note">鍵盤位置參考｜黃色為基準列（手指定位列）</div>
+      <div class="letter-board" id="keyboard"></div>
+    </div>
+    <div class="practice-card">
+      <div class="note" id="practiceLabel">練習模式：看見提示後，在下方輸入相同字母。熟悉位置後就可以領取貼紙！</div>
+      <div class="target" id="practiceTarget">F</div>
+      <div class="type-row"><input id="practiceInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="直接輸入字母或單字，答對會自動判定"></div>
+      <div class="feedback" id="practiceFeedback" aria-live="polite"></div>
+      <div class="controls"><button class="primary" id="startTest">我準備好了，開始測驗！</button></div>
+    </div>
+    <div id="stickerArea"></div>
+  </div>
+  <div id="test" class="hidden">
+    <h2 id="testTitle">限時掉落測驗</h2>
+    <p class="sub" id="testText">直接輸入掉落物上的字母或單字，答對就會自動消除。時間內清除全部目標即可成功！</p>
+    <div class="game-layout">
+      <div>
+        <div class="gamefield" id="gamefield" aria-label="字母掉落遊戲區"></div>
+        <div class="type-row"><input id="gameInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="直接打出掉落的字母或單字即可消除"></div>
+        <div class="feedback" id="gameFeedback" aria-live="polite"></div>
+      </div>
+      <aside class="sidebox">
+        <div class="stat"><span>剩餘時間</span><strong><span id="time">45</span> 秒</strong></div>
+        <div class="stat"><span>已消除</span><strong id="progress">0 / 10</strong></div>
+        <div class="stat"><span>連續成功</span><strong id="combo">0</strong></div>
+        <p class="note">小提示：大小寫都可以，單字請完整輸入。先消除比較低的目標，注意時間喔！</p>
+        <button class="secondary" id="quitTest" style="width:100%">回到練習</button>
+      </aside>
+    </div>
+    <div class="result hidden" id="result"></div>
+  </div>
+  <div id="finish" class="hidden"></div>
+</section>
+</main>
+<footer>慢慢練習、勇敢挑戰，每一次進步都值得鼓勵！</footer>
+<script>
+const stages=[
+ {name:"字母練習（慢速）",kind:"letter",speed:1,items:"ASDFJKLQWERTYUIOPZXCVBNM".split(""),badge:"字母玩家貼紙",emoji:"🎮",seconds:55,count:10},
+ {name:"字母練習（快速）",kind:"letter",speed:1.7,items:"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),badge:"字母高級玩家貼紙",emoji:"🌟",seconds:45,count:12},
+ {name:"單字練習（慢速）",kind:"word",speed:1,items:["cat","dog","sun","book","fish","milk","tree","blue","apple","happy","school","water"],badge:"單詞小鑽石貼紙",emoji:"💎",seconds:55,count:10},
+ {name:"單字練習（快速）",kind:"word",speed:1.75,items:["friend","family","orange","pencil","rabbit","window","garden","purple","teacher","computer","rainbow","morning"],badge:"英打 master 貼紙",emoji:"👑",seconds:45,count:12}
+];
+const earned=new Set();
+let stage=0,practiceIndex=0,practiced=false,testActive=false,objects=[],timer=null,anim=null,startTime=0,lastSpawn=0,cleared=0,combo=0,finished=false;
+const practicedLetters=new Set();
+const $=id=>document.getElementById(id);
+const keyboardRows=[
+ [{t:"1"},{t:"2"},{t:"3"},{t:"4"},{t:"5"},{t:"6"},{t:"7"},{t:"8"},{t:"9"},{t:"0"},{t:"-"},{t:"="},{t:"Backspace",c:"wide"}],
+ [{t:"Q"},{t:"W"},{t:"E"},{t:"R"},{t:"T"},{t:"Y"},{t:"U"},{t:"I"},{t:"O"},{t:"P"},{t:"["},{t:"]"},{t:"\\",c:"wide"}],
+ [{t:"Caps",c:"wide"},{t:"A",h:1},{t:"S",h:1},{t:"D",h:1},{t:"F",h:1},{t:"G"},{t:"H"},{t:"J",h:1},{t:"K",h:1},{t:"L",h:1},{t:";"},{t:"'",},{t:"Enter",c:"wide"}],
+ [{t:"Shift",c:"wide"},{t:"Z"},{t:"X"},{t:"C"},{t:"V"},{t:"B"},{t:"N"},{t:"M"},{t:","},{t:"."},{t:"/"},{t:"Shift",c:"wide"}],
+ [{t:"Ctrl",c:"wide"},{t:"Fn",c:"wide"},{t:"Alt",c:"wide"},{t:"",c:"space"},{t:"Alt",c:"wide"},{t:"Ctrl",c:"wide"}]
+];
+function drawKeyboard(){
+ const board=$("keyboard");board.innerHTML="";
+ keyboardRows.forEach(row=>{
+  const rowEl=document.createElement("div");rowEl.className="key-row";
+  row.forEach(item=>{
+   const el=document.createElement("div");el.className="keycap"+(item.h?" home":"")+(item.c?" "+item.c:"");el.textContent=item.t;
+   if(item.t.length===1&&/[A-Z]/.test(item.t))el.id="key-"+item.t;
+   rowEl.appendChild(el);
+  });board.appendChild(rowEl);
+ });
+}
+function updateSteps(){document.querySelectorAll(".step").forEach((el,i)=>{el.classList.toggle("active",i===stage);el.classList.toggle("done",earned.has("stage"+i))})}
+const stickerInfo=[
+ {id:"position",emoji:"🌈",name:"你好棒貼紙",desc:"熟悉字母位置"},
+ {id:"stage0",emoji:"🎮",name:"字母玩家貼紙",desc:"第一關測驗成功"},
+ {id:"stage1",emoji:"🌟",name:"字母高級玩家貼紙",desc:"第二關測驗成功"},
+ {id:"stage2",emoji:"💎",name:"單詞小鑽石貼紙",desc:"第三關測驗成功"},
+ {id:"stage3",emoji:"👑",name:"英打 master 貼紙",desc:"第四關測驗成功"}
+];
+function renderCollection(){
+ const shelf=$("stickerShelf");if(!shelf)return;
+ shelf.innerHTML=stickerInfo.map(b=>{
+  const got=earned.has(b.id);
+  return `<div class="sticker-card ${got?"earned":""}"><div class="sticker-icon">${b.emoji}</div><strong>${b.name}</strong><small>${got?"已獲得 ✓":"尚未獲得"}</small></div>`;
+ }).join("");
+ $("stickerCount").textContent=`已收集 ${stickerInfo.filter(b=>earned.has(b.id)).length} / ${stickerInfo.length}`;
+}
+function setPrompt(){
+ const s=stages[stage];const target=(stage===0 ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("") : s.items)[practiceIndex%(stage===0?26:s.items.length)];$("practiceTarget").textContent=target;$("practiceInput").value="";$("practiceFeedback").textContent="";practiced=false;
+ document.querySelectorAll(".keycap").forEach(k=>k.classList.remove("hit"));
+ if(s.kind==="letter"){const key=$("key-"+target.toUpperCase());if(key)key.classList.add("hit")}
+}
+function showStage(){
+ const s=stages[stage];testActive=false;$("test").classList.add("hidden");$("lesson").classList.remove("hidden");$("finish").classList.add("hidden");
+ $("pageTitle").textContent="教學方法";$("modePill").textContent=`第 ${stage+1} / 4 關`;
+ $("lessonTitle").textContent=`第 ${stage+1} 關｜${s.name}`;
+ $("lessonText").textContent=s.kind==="letter"?"先看鍵盤上的字母位置，熟悉後再進行掉落測驗。第一關需要把 A–Z 每個字母都至少答對一次，才能獲得「你好棒貼紙」。黃色按鍵是基準列，練習時可以留意手指的位置。":`這一關練習常見英文單字，先看清楚拼字，再逐步練習輸入。完成練習後，就能挑戰${s.speed>1?"快速":"慢速"}掉落測驗。`;
+ $("practiceLabel").textContent=s.kind==="letter"?"練習模式：看見提示後輸入相同字母，答對後會自動換下一題。":"練習模式：看見英文單字後，完整輸入拼字。大小寫皆可。";
+ $("startTest").textContent="我準備好了，開始測驗！";$("stickerArea").innerHTML="";
+ if(stage===0 && !earned.has("position")){$("stickerArea").innerHTML=`<div class="badge-pop"><div class="sticker">🌈</div><div><h3>你好棒貼紙</h3><p>請把 A–Z 每個字母都至少答對一次才能獲得！目前完成 ${practicedLetters.size} / 26 個字母。</p></div></div>`}
+ setPrompt();updateSteps();
+}
+function checkPractice(){
+ const target=$("practiceTarget").textContent.toLowerCase(),v=$("practiceInput").value.trim().toLowerCase();
+ if(!v)return;
+ if(v===target){
+  $("practiceFeedback").textContent="答對了！自動前往下一題 ✨";practiced=true;
+  if(stage===0&&!earned.has("position")){
+   practicedLetters.add(target.toUpperCase());
+   const done=practicedLetters.size;
+   if(done>=26){
+    earned.add("position");
+    $("stickerArea").innerHTML='<div class="badge-pop"><div class="sticker">🌈</div><div><h3>太棒了！獲得「你好棒貼紙」！</h3><p>你已經把 A–Z 的每個字母都練習過了，完成字母位置挑戰！</p></div></div>';
+   }else{
+    $("stickerArea").innerHTML=`<div class="badge-pop"><div class="sticker">🌈</div><div><h3>你好棒貼紙進度</h3><p>已練習 ${done} / 26 個不同字母，再把所有字母都答對一次就能獲得貼紙！</p></div></div>`;
+   }
+   renderCollection();
+  }
+  const k=$("key-"+target.toUpperCase());if(k)k.classList.add("hit");
+  practiceIndex++;
+  window.setTimeout(()=>{if(!$("lesson").classList.contains("hidden"))setPrompt()},450);
+ }else if(v.length>=target.length){$("practiceFeedback").textContent="再試一次！仔細看看提示的字母或單字。";practiced=false}
+}
+function nextPractice(){practiceIndex++;setPrompt()}
+function startTest(){
+ $("lesson").classList.add("hidden");$("test").classList.remove("hidden");$("result").classList.add("hidden");
+ const s=stages[stage];objects=[];cleared=0;combo=0;finished=false;testActive=true;
+ $("time").textContent=s.seconds;$("progress").textContent=`0 / ${s.count}`;$("combo").textContent="0";$("gameFeedback").textContent="開始！把掉落的目標打出來！";$("gameInput").value="";
+ $("gamefield").innerHTML="";$("testTitle").textContent=`第 ${stage+1} 關測驗｜${s.kind==="letter"?"字母":"單字"}掉落挑戰`;
+ $("testText").textContent=`限時 ${s.seconds} 秒，清除全部 ${s.count} 個目標即可過關！直接輸入目標即可自動消除。`;
+ startTime=performance.now();lastSpawn=0;
+ if(timer)clearInterval(timer);timer=setInterval(tickTimer,100);
+ if(anim)cancelAnimationFrame(anim);anim=requestAnimationFrame(gameLoop);$("gameInput").focus();
+}
+function spawnObject(){
+ const s=stages[stage];const target=s.items[Math.floor(Math.random()*s.items.length)];
+ const el=document.createElement("div");el.className="falling"+(s.kind==="word"?" word":"");el.textContent=target;
+ const max=Math.max(3,$("gamefield").clientWidth-el.offsetWidth-20);el.style.left=(10+Math.random()*Math.max(10,max-10))+"px";el.style.top="-45px";$("gamefield").appendChild(el);
+ objects.push({target,el,y:-45,speed:(s.kind==="word"?0.38:0.55)*s.speed+Math.random()*0.22});
+}
+function gameLoop(now){
+ if(!testActive)return;const s=stages[stage],field=$("gamefield");
+ if(!lastSpawn||now-lastSpawn>Math.max(700,1500/s.speed)){if(objects.length<5&&cleared<s.count)spawnObject();lastSpawn=now}
+ objects.forEach(o=>{o.y+=o.speed*(now-(o.last||now))*.07;o.last=now;o.el.style.top=o.y+"px"});
+ // Reaching the bottom costs time indirectly, but objects remain available until missed.
+ const missed=objects.filter(o=>o.y>field.clientHeight-48);
+ missed.forEach(o=>{removeObject(o);$("gameFeedback").textContent="有目標掉到底部了，繼續集中精神！";combo=0;$("combo").textContent=combo});
+ if(cleared>=s.count){endTest(true);return}
+ anim=requestAnimationFrame(gameLoop);
+}
+function removeObject(o){o.el.remove();objects=objects.filter(x=>x!==o)}
+function hitTarget(){
+ if(!testActive)return;const val=$("gameInput").value.trim().toLowerCase();if(!val)return;
+ const found=objects.find(o=>o.target.toLowerCase()===val);
+ if(found){removeObject(found);cleared++;combo++;$("progress").textContent=`${cleared} / ${stages[stage].count}`;$("combo").textContent=combo;$("gameFeedback").textContent=["漂亮！消除成功！","好厲害，繼續保持！","太棒了！"][Math.floor(Math.random()*3)];$("gameInput").value="";$("gameInput").focus();if(cleared>=stages[stage].count)endTest(true)}
+ else{$("gameFeedback").textContent="還沒找到這個目標，確認拼字後再試試！";combo=0;$("combo").textContent=combo}
+}
+function tickTimer(){if(!testActive)return;const left=Math.max(0,stages[stage].seconds-Math.floor((performance.now()-startTime)/1000));$("time").textContent=left;if(left<=0)endTest(false)}
+function endTest(success){
+ if(!testActive)return;testActive=false;finished=true;clearInterval(timer);cancelAnimationFrame(anim);
+ const s=stages[stage];$("result").classList.remove("hidden");
+ if(success){earned.add("stage"+stage);updateSteps();renderCollection();$("result").innerHTML=`<div class="big">🎉🏆✨</div><h2>挑戰成功！</h2><div class="badge-pop" style="text-align:left"><div class="sticker">${s.emoji}</div><div><h3>獲得「${s.badge}」！</h3><p>你成功清除了所有目標，太棒了！</p></div></div><p>本關完成：${cleared} / ${s.count}</p><div class="controls" style="justify-content:center"><button class="primary" id="continueBtn">${stage<3?"前往下一關":"查看冒險成果"}</button><button class="secondary" id="retryBtn">再玩一次</button></div>`;
+ }else{$("result").innerHTML=`<div class="big">💪🌱</div><h2>再試一次，你可以的！</h2><p>時間到囉！你清除了 ${cleared} / ${s.count} 個目標。回到練習或重新挑戰，熟悉之後會越來越快。</p><div class="controls" style="justify-content:center"><button class="primary" id="retryBtn">重新挑戰</button><button class="secondary" id="backPracticeBtn">回到練習</button></div>`}
+ $("result").querySelector("#retryBtn").onclick=startTest;
+ const next=$("continueBtn");if(next)next.onclick=()=>{if(stage<3){stage++;practiceIndex=0;showStage()}else showFinish()};
+ const back=$("backPracticeBtn");if(back)back.onclick=()=>showStage();
+}
+function showFinish(){
+ $("test").classList.add("hidden");$("lesson").classList.add("hidden");$("finish").classList.remove("hidden");$("pageTitle").textContent="英打冒險完成！";$("modePill").textContent="全關通過";
+ const badges=[{e:"🌈",n:"你好棒貼紙",desc:"熟悉字母位置"},{e:"🎮",n:"字母玩家貼紙",desc:"第一關測驗成功"},{e:"🌟",n:"字母高級玩家貼紙",desc:"第二關測驗成功"},{e:"💎",n:"單詞小鑽石貼紙",desc:"第三關測驗成功"},{e:"👑",n:"英打 master 貼紙",desc:"第四關測驗成功"}];
+ $("finish").innerHTML=`<div class="result"><div class="big">🎊🎊🎊</div><h2>你是英打冒險王！</h2><p>四個關卡都完成了，看看你的貼紙收藏：</p><div class="steps" style="grid-template-columns:repeat(auto-fit,minmax(145px,1fr))">${badges.map(b=>`<div class="step done"><div style="font-size:2.3rem">${b.e}</div><b>${b.n}</b><p class="note">${b.desc}</p></div>`).join("")}</div><p>持續練習，打字速度和準確度會慢慢進步！</p><button class="primary" id="restartAll">再玩一次</button></div>`;
+ $("restartAll").onclick=()=>{stage=0;practiceIndex=0;earned.clear();practicedLetters.clear();renderCollection();showStage()};
+}
+document.querySelectorAll(".step").forEach(el=>el.addEventListener("click",()=>{const n=Number(el.dataset.stage);if(n<=stage||earned.has("stage"+(n-1))){stage=n;practiceIndex=0;showStage()}else{$("gameFeedback").textContent="先完成前面的關卡，就能解鎖下一關喔！"}}));
+$("practiceInput").addEventListener("input",()=>{
+ const value=$("practiceInput").value.trim().toLowerCase();
+ const target=$("practiceTarget").textContent.trim().toLowerCase();
+ if(value===target){checkPractice()}
+ else if(value.length>=target.length){$("practiceFeedback").textContent="還差一點，再看看提示並試一次！";practiced=false}
+}); 
+$("practiceInput").addEventListener("keydown",e=>{if(e.key==="Enter")checkPractice()});
+// 下一題已改為答對後自動切換，不再需要「下一題」按鈕。
+$("startTest").addEventListener("click",function(event){event.preventDefault();startTest();});
+$("gameInput").addEventListener("input",()=>{
+ if(!testActive)return;
+ const value=$("gameInput").value.trim().toLowerCase();
+ if(value && objects.some(o=>o.target.toLowerCase()===value))hitTarget();
+});
+$("gameInput").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();hitTarget()}});
+$("quitTest").addEventListener("click",()=>{testActive=false;clearInterval(timer);cancelAnimationFrame(anim);showStage()});
+drawKeyboard();renderCollection();showStage();
+</script>
+</body>
+</html>
